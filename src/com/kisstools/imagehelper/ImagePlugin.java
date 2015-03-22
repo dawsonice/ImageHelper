@@ -8,5 +8,5 @@ import android.graphics.Bitmap;
 
 public interface ImagePlugin {
 
-	public Bitmap process(Bitmap bitmap);
+	public Bitmap process(Bitmap original);
 }

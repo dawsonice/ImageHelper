@@ -18,11 +18,19 @@ import android.graphics.Bitmap;
 
 public class ImageHelper {
 
-	public static final String TAG = "ImagePlugin";
+	public static final String TAG = "ImageHelper";
 
-	List<ImagePlugin> plugins;
+	public static final int RECYCLE_ORIGIN = 0x2;
+
+	private List<ImagePlugin> plugins;
+	private int options;
 
 	public ImageHelper() {
+		this(RECYCLE_ORIGIN);
+	}
+
+	public ImageHelper(int options) {
+		this.options = options;
 		plugins = new ArrayList<ImagePlugin>();
 	}
 
@@ -31,10 +39,15 @@ public class ImageHelper {
 		return this;
 	}
 
-	public Bitmap process(Bitmap bitmap) {
+	public Bitmap process(Bitmap original) {
 		for (ImagePlugin plugin : plugins) {
-			bitmap = plugin.process(bitmap);
+			Bitmap result = plugin.process(original);
+			// recycle the original bitmap
+			if ((options & RECYCLE_ORIGIN) != 0 && !original.isRecycled()) {
+				original.recycle();
+			}
+			original = result;
 		}
-		return bitmap;
+		return original;
 	}
 }
